@@ -389,14 +389,19 @@ def painel_alunos(request):
 
     # Gráfico de Pizza - Sexo
     fig1, ax1 = plt.subplots(figsize=(3, 3))
-    ax1.pie(
-        [total_masculino, total_feminino, total_outros],
-        labels=['Masculino', 'Feminino', 'Outros'],
-        autopct='%1.1f%%',
-        colors=['#42a5f5', '#ef5350', '#ab47bc'],
-        startangle=90
-    )
-    ax1.axis('equal')
+    if total_geral > 0:
+        ax1.pie(
+            [total_masculino, total_feminino, total_outros],
+            labels=['Masculino', 'Feminino', 'Outros'],
+            autopct='%1.1f%%',
+            colors=['#42a5f5', '#ef5350', '#ab47bc'],
+            startangle=90
+        )
+        ax1.axis('equal')
+    else:
+        ax1.text(0.5, 0.5, "Sem dados", ha='center', va='center', fontsize=12)
+        ax1.axis('off')
+
     buffer1 = BytesIO()
     plt.savefig(buffer1, format='png', bbox_inches='tight')
     buffer1.seek(0)
@@ -417,7 +422,7 @@ def painel_alunos(request):
     # Gráfico de Barras - Idades
     fig3, ax3 = plt.subplots(figsize=(5, 2.5))
     faixas = list(range(5, 16))
-    valores = [int(contagem_idades.get(i, 0) or 0) for i in faixas]  # 👈 Proteção contra NaN
+    valores = [int(contagem_idades.get(i, 0) or 0) for i in faixas]
 
     ax3.bar(faixas, valores, color='#ff9800')
     ax3.set_title("Distribuição por Idade (5 a 15 anos)")
@@ -438,6 +443,7 @@ def painel_alunos(request):
         'total_f': total_feminino,
         'total_o': total_outros,
     })
+
 
 def login_view(request):
     if request.method == 'POST':
