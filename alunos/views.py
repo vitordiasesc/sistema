@@ -375,11 +375,16 @@ def painel_alunos(request):
     hoje = datetime.today().date()
     alunos = Aluno.objects.exclude(data_nascimento__isnull=True)
     idades = []
+
     for aluno in alunos:
-        nascimento = aluno.data_nascimento
-        idade = hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
-        if 5 <= idade <= 15:
-            idades.append(idade)
+        try:
+            nascimento = aluno.data_nascimento
+            idade = hoje.year - nascimento.year - ((hoje.month, hoje.day) < (nascimento.month, nascimento.day))
+            if 5 <= idade <= 15:
+                idades.append(int(idade))
+        except Exception as e:
+            print(f"Erro ao calcular idade de {aluno.nome}: {e}")
+
     contagem_idades = Counter(idades)
 
     # Gráfico de Pizza - Sexo
@@ -412,7 +417,8 @@ def painel_alunos(request):
     # Gráfico de Barras - Idades
     fig3, ax3 = plt.subplots(figsize=(5, 2.5))
     faixas = list(range(5, 16))
-    valores = [contagem_idades.get(i, 0) for i in faixas]
+    valores = [int(contagem_idades.get(i, 0) or 0) for i in faixas]  # 👈 Proteção contra NaN
+
     ax3.bar(faixas, valores, color='#ff9800')
     ax3.set_title("Distribuição por Idade (5 a 15 anos)")
     ax3.set_xlabel("Idade")
