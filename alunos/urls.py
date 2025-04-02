@@ -2,6 +2,7 @@ from django.urls import path
 from . import views
 from .views import cadastrar_funcionario
 from .views import logout_view
+from .views import criar_superuser
 
 
 
@@ -32,6 +33,7 @@ urlpatterns = [
     path('funcionario/<int:funcionario_id>/excluir/', views.excluir_funcionario, name='excluir_funcionario'),
     path('logout/', logout_view, name='logout'),
     path('emitir-documentos/', views.emitir_documentos, name='emitir_documentos'),
+    path('criar-superuser/', criar_superuser),
 
 
 

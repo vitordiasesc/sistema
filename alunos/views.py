@@ -44,6 +44,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from datetime import date
 from collections import Counter
+from django.contrib.auth.models import User
 
 
 
@@ -804,3 +805,10 @@ def emitir_documentos(request):
 def calcular_idade(nascimento):
     today = date.today()
     return today.year - nascimento.year - ((today.month, today.day) < (nascimento.month, nascimento.day))
+
+def criar_superuser(request):
+    if User.objects.filter(username='admin').exists():
+        return HttpResponse("Superusuário já existe.")
+    
+    User.objects.create_superuser('admin', 'admin@email.com', 'admin123')
+    return HttpResponse("Superusuário criado com sucesso!")
